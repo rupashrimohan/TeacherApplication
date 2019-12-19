@@ -100,8 +100,8 @@ public void doPost(HttpServletRequest req, HttpServletResponse resp) throws Serv
 	teacher.setSkill(skill);
 	PrintWriter out = resp.getWriter();
 	out.println("<html><body>");
-	int teacherId=0;
-	teacherId = teacherDAO.saveTeacher(teacher);
+	
+int	teacherId = teacherDAO.saveTeacher(teacher);
 	if(teacher !=null)
 	{
 		

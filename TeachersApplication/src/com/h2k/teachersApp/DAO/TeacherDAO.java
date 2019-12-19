@@ -7,13 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.h2k.teachersApp.DTO.TeacherDTO;
+import com.mysql.cj.xdevapi.Statement;
 
 public class TeacherDAO {
 	
 	private static String url =  "jdbc:mysql://localhost:3306/sakila";
 	private static String userName = "root";
 	private static String password = "test";
-	private static String getTeacher="Select * from teacher where teacher_id=?";
+	private static String getTeacher="Select * from teacher where firstName=?";
 	private static String insertTeacher="Insert into teacher(teacher_id,firstname,lastname,skill)values(?,?,?,?)";
 	
 	public static Connection getConnection() throws ClassNotFoundException
@@ -58,21 +59,23 @@ public class TeacherDAO {
 		return teacher;
 }
 	public int saveTeacher(TeacherDTO teacher) {
-		int teacherId=0;
-        teacher=null;
-		
+		int teacherId=teacher.getTeacherId();
 		try {
 			Connection conn=getConnection();
-			teacher = new TeacherDTO();
+			//teacher = new TeacherDTO();
 			PreparedStatement pstat = conn.prepareStatement(insertTeacher);
 			pstat.setInt(1,teacher.getTeacherId());
 			pstat.setString(2, teacher.getFirstName());
 			pstat.setString(3, teacher.getLastName());
 			pstat.setString(4, teacher.getSkill());
 			int rowsaffected = pstat.executeUpdate();
+			
 			System.out.println("No of rows affected :" +rowsaffected);
-			PreparedStatement pstat1 = conn.prepareStatement(getTeacher);
-		    ResultSet rs = pstat.executeQuery();
+			PreparedStatement  stmt = conn.prepareStatement("Select * from teacher where firstName='"+teacher.getFirstName()+"'");
+			ResultSet rs = stmt.executeQuery();
+			//PreparedStatement pstat1 = conn.prepareStatement(getTeacher);
+			//pstat1.setString(1, teacher.getFirstName());
+		   // ResultSet rs = pstat.executeQuery();
 			if (rs!=null) {
 				while(rs.next()) {
 					teacherId = rs.getInt("teacher_id");
@@ -80,11 +83,12 @@ public class TeacherDAO {
 			}
 			
 			conn.close();
+			
 		}catch(Exception sqlEx) {
 			sqlEx.printStackTrace();
 		}
-		return teacherId;
 			
+			return teacherId;
 		}
 	}
 
